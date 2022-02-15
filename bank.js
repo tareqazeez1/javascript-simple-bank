@@ -1,53 +1,73 @@
-// Banking page functions
+/* -----*** DOM manupuation with reusable Functions *** ----- */
 
-// || Funtion for deposit button ||
+
+/* --------Function for getting the input value from the fields --------- */
+
+function getInputValue(inputId) {
+    const inputField = document.getElementById(inputId);
+    const inputAmountText = inputField.value;
+    const amountValue = parseFloat(inputAmountText);
+    // To make field empty
+    inputField.value = '';
+    return amountValue;
+}
+
+/* --------Function for updating the deposit withdraw total box --------- */
+
+function updateTotalBox(totalFieldId, newAmount) {  //'show-deposit-total' or 'show-withdraw-total'
+    const showTotal = document.getElementById(totalFieldId);
+    const prevTotalAmountText = showTotal.innerText;
+    const prevTotal = parseFloat(prevTotalAmountText);
+    showTotal.innerText = prevTotal + newAmount;
+}
+
+/* -------Function to get the current balance in the total balance box------*/
+
+function getCurrentBalance() {
+    const balanceTotal = document.getElementById('show-balance-total');
+    const balanceTotalAmountText = balanceTotal.innerText;
+    const prevBalanceTotal = parseFloat(balanceTotalAmountText);
+    return prevBalanceTotal;
+}
+
+
+/* --------Function for updating main balance total box --------- */
+
+function updateBalance(newAmount, isAdd) {
+    const balanceTotal = document.getElementById('show-balance-total');
+    /*  const balanceTotalAmountText = balanceTotal.innerText;
+        const prevBalanceTotal = parseFloat(balanceTotalAmountText);  */
+    const prevBalanceTotal = getCurrentBalance();
+    if (isAdd == true) {
+        balanceTotal.innerText = prevBalanceTotal + newAmount;
+    } else {
+        balanceTotal.innerText = prevBalanceTotal - newAmount;
+    }
+}
+
+
+
+/* ----------------------- For deposit ----------------------- */
 document.getElementById('deposit-button').addEventListener('click', function () {
-    const depositInput = document.getElementById('deposit-input');
-    const newDepositAmountText = depositInput.value;
-    const newDepositAmount = parseFloat(newDepositAmountText);
+    const newDepositAmount = getInputValue('deposit-input');
 
     // update deposit box
-    const depositTotal = document.getElementById('show-deposit-total');
-    const prevDepositAmountText = depositTotal.innerText;
-    const prevDepositAmount = parseFloat(prevDepositAmountText);
-    const newDepositTotal = prevDepositAmount + newDepositAmount;
-    depositTotal.innerText = newDepositTotal;
-    // To make field empty
-    depositInput.value = '';
-
+    if (newDepositAmount > 0) {
+        updateTotalBox('show-deposit-total', newDepositAmount)
+    } else { alert("Deposit amount cannot be negative or string") }
     // Update account balance (+)
-
-    const balanceTotal = document.getElementById('show-balance-total');
-    const balanceTotalAmountText = balanceTotal.innerText;
-    const prevBalanceTotal = parseFloat(balanceTotalAmountText);
-    const newBalanceTotal = prevBalanceTotal + newDepositAmount;
-    balanceTotal.innerText = newBalanceTotal;
+    updateBalance(newDepositAmount, true);
 })
-
-// || Funtion for withdraw button ||
-
+/* ----------------------- For withdraw ----------------------- */
 document.getElementById('withdraw-button').addEventListener('click', function () {
-    const withdrawInput = document.getElementById('withdraw-input');
-    const withdrawAmountText = withdrawInput.value;
-    const newWithdrawAmount = parseFloat(withdrawAmountText);
-
+    const newWithdrawAmount = getInputValue('withdraw-input');
+    const currentBalance = getCurrentBalance();
     // update the withdraw box
+    if (newWithdrawAmount > 0 && newWithdrawAmount < currentBalance) {
+        updateTotalBox('show-withdraw-total', newWithdrawAmount);
+    } else { alert("Withdraw amount cannot be negative or string") }
+    // Update account balance (+)
+    updateBalance(newWithdrawAmount, false);
 
-    const withdrawTotal = document.getElementById('show-withdraw-total');
-    const prevWithdrawText = withdrawTotal.innerText;
-    const prevWithdrawAmount = parseFloat(prevWithdrawText);
-    const showWithdrawTotal = newWithdrawAmount + prevWithdrawAmount;
-    withdrawTotal.innerText = showWithdrawTotal;
-
-    // To make input field empty
-    withdrawInput.value = '';
-
-    // Update account balance (-)
-
-    const balanceTotal = document.getElementById('show-balance-total');
-    const balanceTotalAmountText = balanceTotal.innerText;
-    const prevBalanceTotal = parseFloat(balanceTotalAmountText);
-    const newBalanceTotal = prevBalanceTotal - newWithdrawAmount;
-    balanceTotal.innerText = newBalanceTotal;
 
 })
